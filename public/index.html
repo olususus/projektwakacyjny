@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administracja Sklepu</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Panel Administracyjny Sklepu</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#">Strona Główna</a></li>
+            <li><a href="#">Produkty</a></li>
+            <li><a href="#">Zamówienia</a></li>
+            <li><a href="#">Klienci</a></li>
+        </ul>
+        <button id="logoutButton">Wyloguj się [soon]</button>
+    </nav>
+    <main>
+        <section id="products">
+            <h2>Zarządzanie Produktami</h2>
+            <form id="productForm">
+                <label for="productName">Nazwa Produktu:</label>
+                <input type="text" id="productName" required>
+                <label for="productPrice">Cena:</label>
+                <input type="number" id="productPrice" required>
+                <button type="submit">Dodaj Produkt</button>
+            </form>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nazwa Produktu</th>
+                        <th>Cena</th>
+                        <th>Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Tu będą produkty -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <!-- Modal do edycji produktu -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <form id="editProductForm">
+                <h2>Edytuj Produkt</h2>
+                <label for="editProductName">Nazwa Produktu:</label>
+                <input type="text" id="editProductName" required>
+                <label for="editProductPrice">Cena:</label>
+                <input type="number" id="editProductPrice" required>
+                <button type="submit">Zapisz Zmiany</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>
