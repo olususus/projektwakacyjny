@@ -9,17 +9,19 @@
 <body>
     <header>
         <h1>Panel Administracyjny Sklepu</h1>
+        <nav id="navbar" style="display: none;">
+            <ul>
+                <li><a href="#">Strona Główna</a></li>
+                <li><a href="#">Produkty</a></li>
+                <li><a href="#">Zamówienia</a></li>
+                <li><a href="#">Klienci</a></li>
+                <li><a href="/adminpage.html">Admin Page</a></li> <!-- Dodajemy odnośnik do strony admina -->
+            </ul>
+            <button id="logoutButton">Wyloguj się</button>
+        </nav>
     </header>
-    <nav>
-        <ul>
-            <li><a href="#">Strona Główna</a></li>
-            <li><a href="#">Produkty</a></li>
-            <li><a href="#">Zamówienia</a></li>
-            <li><a href="#">Klienci</a></li>
-        </ul>
-        <button id="logoutButton">Wyloguj się [soon]</button>
-    </nav>
-    <main>
+    
+    <main id="main" style="display: none;">
         <section id="products">
             <h2>Zarządzanie Produktami</h2>
             <form id="productForm">
@@ -59,6 +61,142 @@
         </div>
     </div>
 
-    <script src="js/script.js"></script>
+    <!-- Formularz logowania -->
+    <div id="login-form-container">
+        <h2>Logowanie</h2>
+        <form id="login-form">
+            <input type="text" name="username" id="username-field" class="login-form-field" placeholder="Username">
+            <input type="password" name="password" id="password-field" class="login-form-field" placeholder="Password">
+            <input type="submit" value="Login" id="login-form-submit">
+            <p id="login-error-msg" style="display: none;">Invalid username and/or password</p>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById("login-form");
+            const loginButton = document.getElementById("login-form-submit");
+            const loginErrorMsg = document.getElementById("login-error-msg");
+            const navbar = document.getElementById("navbar");
+            const main = document.getElementById("main");
+
+            loginForm.addEventListener("submit", function(e) {
+                e.preventDefault();
+                const username = loginForm.username.value;
+                const password = loginForm.password.value;
+
+                // Wysyłanie danych logowania do serwera
+                fetch('/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Logowanie udane - przekierowanie do panelu administracyjnego
+                    localStorage.setItem('sessionToken', data.token); // Zapis tokena sesji (przy założeniu, że serwer zwraca token)
+                    loginErrorMsg.style.display = 'none';
+                    loginForm.reset();
+                    checkUserRoleAndRedirect();
+                })
+                .catch(error => {
+                    // Logowanie nieudane - wyświetlenie komunikatu o błędzie
+                    loginErrorMsg.style.display = 'block';
+                    console.error('Error logging in:', error);
+                });
+            });
+
+            function checkUserRoleAndRedirect() {
+                const sessionToken = localStorage.getItem('sessionToken');
+                if (sessionToken) {
+                    fetch('/check-role', {
+                        method: 'GET',
+                        headers: {
+                            'Authorization': `Bearer ${sessionToken}`
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.role === 'admin') {
+                            showAdminPanel();
+                        } else {
+                            console.log('Unauthorized access');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error checking role:', error);
+                    });
+                }
+            }
+
+            function showAdminPanel() {
+                navbar.style.display = 'block';
+                main.style.display = 'block';
+                document.getElementById("login-form-container").style.display = 'none';
+            }
+
+            // Sprawdzenie czy użytkownik jest już zalogowany na podstawie tokena sesji
+            const sessionToken = localStorage.getItem('sessionToken');
+            if (sessionToken) {
+                // Użytkownik już zalogowany - sprawdź jego rolę i przekieruj na odpowiednią stronę
+                checkUserRoleAndRedirect();
+            } else {
+                // Użytkownik niezalogowany - pokaż formularz logowania
+                document.getElementById("login-form-container").style.display = 'block';
+            }
+
+            // Obsługa wylogowania
+            const logoutButton = document.getElementById("logoutButton");
+            logoutButton.addEventListener("click", function() {
+                localStorage.removeItem('sessionToken'); // Usunięcie tokena sesji
+                navbar.style.display = 'none';
+                main.style.display = 'none';
+                document.getElementById("login-form-container").style.display = 'block';
+            });
+        });
+    </script>
+
+<main id="main" style="display: none;">
+    <section id="users">
+        <h2>Zarządzanie Użytkownikami</h2>
+        <form id="userForm">
+            <label for="username">Nazwa użytkownika:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Hasło:</label>
+            <input type="password" id="password" name="password" required>
+            <label for="role">Rola:</label>
+            <select id="role" name="role">
+                <option value="user">Użytkownik</option>
+                <option value="admin">Admin</option>
+            </select>
+            <button type="submit">Dodaj Użytkownika</button>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nazwa Użytkownika</th>
+                    <th>Rola</th>
+                    <th>Akcje</th>
+                </tr>
+            </thead>
+            <tbody id="usersList">
+                <!-- Tu będą użytkownicy -->
+            </tbody>
+        </table>
+    </section>
+</main>
+
 </body>
 </html>

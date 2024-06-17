@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Administracyjny</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Panel Administracyjny</h1>
+    </header>
+    <nav>
+        <ul>
+            <li><a href="#">Strona Główna</a></li>
+            <li><a href="#">Produkty</a></li>
+            <li><a href="#">Zamówienia</a></li>
+            <li><a href="#">Klienci</a></li>
+        </ul>
+        <button id="logoutButton">Wyloguj się</button>
+    </nav>
+    <main>
+        <section id="users">
+            <h2>Zarządzanie Użytkownikami</h2>
+            <form id="userForm">
+                <label for="username">Nazwa użytkownika:</label>
+                <input type="text" id="username" name="username" required>
+                <label for="password">Hasło:</label>
+                <input type="password" id="password" name="password" required>
+                <label for="role">Rola:</label>
+                <select id="role" name="role">
+                    <option value="user">Użytkownik</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <button type="submit">Dodaj Użytkownika</button>
+            </form>
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>Nazwa użytkownika</th>
+                        <th>Rola</th>
+                        <th>Akcje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Tu będą użytkownicy -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+    
+    <script src="js/adminpage.js"></script>
+</body>
+</html>
